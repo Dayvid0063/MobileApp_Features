@@ -1,0 +1,48 @@
+name: shoppingapp
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.0.0
+  intl: ^0.17.0
+  carousel_slider: ^4.0.0
+  sqflite: ^2.3.3+1
+  path: ^1.9.0
+  cupertino_icons: ^1.0.6
+  http: ^1.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.0
+
+flutter:
+
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+  - assets/images/watch1.webp
+  - assets/images/watch2.webp
+  - assets/images/watch3.webp
+  - assets/images/watch4.webp
+  - assets/images/watch5.jpeg
+  - assets/images/watch6.jpg
+  - assets/images/watch7.jpg
+  - assets/images/watch8.jpeg
+  - assets/images/watch9.jpeg
+  - assets/images/watch10.jpeg
+  - assets/images/watch11.jpg
+  - assets/images/watch12.jpeg
+  - assets/images/watch13.jpg
+  - assets/images/watch14.jpg
+  - assets/images/nmi.jpg
+
