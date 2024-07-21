@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingapp/components/order_history.dart';
+import 'package:shoppingapp/models/wp.dart';
 import 'package:shoppingapp/models/cart.dart';
 import 'package:shoppingapp/models/op.dart';
 import 'components/home_screen.dart';
@@ -14,6 +15,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => WatchOrderProvider()),
         ChangeNotifierProvider(create: (context) => WatchCartModel()),
+        ChangeNotifierProvider(create: (context) => WishlistProvider()),
       ],
       child: const MyApp(),
     ),

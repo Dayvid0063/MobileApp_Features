@@ -1,107 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'product_info.dart';
-import 'package:shoppingapp/services/services.dart';
-import '../models/product.dart';
+import 'package:shoppingapp/models/product.dart';
+import 'package:shoppingapp/components/product_info.dart';
 import 'package:shoppingapp/models/wp.dart';
 
-class ProductsScreen extends StatefulWidget {
-  const ProductsScreen({super.key});
+class ProductCard extends StatelessWidget {
+  final Watch product;
 
-  @override
-  _ProductsScreenState createState() => _ProductsScreenState();
-}
-
-class _ProductsScreenState extends State<ProductsScreen> {
-  late Future<List<Watch>> futureProducts;
-  Set<String> wishlistedProductIds = {};
-  List<Watch> products = [];
-  int currentPage = 1;
-  final int pageSize = 10;
-  bool isLoadingMore = false;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchProducts();
-  }
-
-  Future<void> fetchProducts() async {
-    setState(() {
-      isLoadingMore = true;
-    });
-    List<Watch> newProducts =
-        await Apicall().fetchAllProducts(currentPage, pageSize);
-    setState(() {
-      products.addAll(newProducts);
-      currentPage++;
-      isLoadingMore = false;
-    });
-  }
-
-  void navigateToProductDetails(Watch product) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => ProductDetailsScreen(product: product)),
-    );
-  }
+  const ProductCard({required this.product, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final wishlistProvider = Provider.of<WishlistProvider>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Products'),
-      ),
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'All Products',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(16.0),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-              ),
-              itemCount:
-                  products.length + 1, // Add one for the "View More" button
-              itemBuilder: (context, index) {
-                if (index == products.length) {
-                  // "View More" button
-                  return Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade900,
-                        foregroundColor: Colors.white,
-                      ),
-                      onPressed: fetchProducts,
-                      child: const Text('View More'),
-                    ),
-                  );
-                }
-                return _buildProductCard(products[index], wishlistProvider);
-              },
-            ),
-          ),
-          if (isLoadingMore) const CircularProgressIndicator(),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildProductCard(Watch product, WishlistProvider wishlistProvider) {
+    void navigateToProductDetails(Watch product) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ProductDetailsScreen(product: product)),
+      );
+    }
+
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +38,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     width: double.infinity,
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset(
-                        'assets/images/noImage.png',
+                        'assets/images/nmi.jpg',
                         width: double.infinity,
                         fit: BoxFit.cover,
                       );

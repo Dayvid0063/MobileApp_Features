@@ -162,9 +162,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           final orderItems = cart.items.map((cartItem) {
                             return WatchOrderItem(
                               watchModel: cartItem.wristwatch.name,
+                              productImage: cartItem.wristwatch.images[0],
                               quantity: cart.getWristwatchQuantity(cartItem),
                               unitPrice: cartItem.wristwatch.discountPrice ??
                                   cartItem.wristwatch.price,
+                              color: cartItem.color,
+                              size: cartItem.size.toString(),
                             );
                           }).toList();
 
@@ -172,6 +175,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             customerName: _nameController.text,
                             totalAmount: cart.totalCartPrice + 5,
                             date: DateTime.now(),
+                            isCompleted: false,
                             items: orderItems,
                           );
 

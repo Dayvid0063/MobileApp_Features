@@ -84,8 +84,10 @@ The Timbu Shopping_App is a complete e-commerce solution that allows users to br
 
 
 ## APK Download Link
+[Download APK](https://www.upload-apk.com/2j5jk9ag9LVCLsV)
 
-[Download APK]()
+## Appetizer.io
+[PlayUrl Link](https://appetize.io/app/b_57zzbrx6zk7uqrkn7e6lkxqcoq)
 
 
 ## Contact

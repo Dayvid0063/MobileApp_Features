@@ -110,7 +110,29 @@ class Watch {
   }
 
   static String getColorLabel(Color color) {
-    return colorLabels[color] ?? 'Unknown';
+    final colorMap = {
+      Colors.red: 'Red',
+      Colors.blue: 'Blue',
+      Colors.yellow: 'Yellow',
+      Colors.green: 'Green',
+      Colors.orange: 'Orange',
+      Colors.purple: 'Purple',
+      Colors.black: 'Black',
+      Colors.white: 'White',
+    };
+
+    if (colorMap.containsKey(color)) {
+      return colorMap[color]!;
+    }
+
+    final colorValue = color.value;
+    for (var entry in colorMap.entries) {
+      if (entry.key.value == colorValue) {
+        return entry.value;
+      }
+    }
+
+    return '';
   }
 
   static String capitalizeFirstLetter(String input) {

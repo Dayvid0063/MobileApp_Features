@@ -6,15 +6,19 @@ class WatchOrderProvider with ChangeNotifier {
   final DBHelper _dbHelper = DBHelper();
 
   List<WatchOrder> _completedOrders = [];
+  List<WatchOrder> _activeOrders = [];
 
   List<WatchOrder> get completedOrders => _completedOrders;
+  List<WatchOrder> get activeOrders => _activeOrders;
 
   WatchOrderProvider() {
     _loadOrders();
   }
 
   Future<void> _loadOrders() async {
-    _completedOrders = await _dbHelper.getOrders();
+    final allOrders = await _dbHelper.getOrders();
+    _activeOrders = allOrders.where((order) => !order.isCompleted).toList();
+    _completedOrders = allOrders.where((order) => order.isCompleted).toList();
     notifyListeners();
   }
 

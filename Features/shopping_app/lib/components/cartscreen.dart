@@ -5,6 +5,8 @@ import 'package:shoppingapp/models/product.dart';
 import 'checkoutscreen.dart';
 
 class CartScreen extends StatelessWidget {
+  const CartScreen({super.key});
+  
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<WatchCartModel>(context);
@@ -13,13 +15,13 @@ class CartScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Cart'),
+        title: const Text('My Cart'),
         titleTextStyle: const TextStyle(
-            fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+            fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
       ),
       body: cart.isCartEmpty
           ? const Center(
-              child: Text('No items in your cart'),
+              child: Text('Your cart is empty'),
             )
           : Column(
               children: [
@@ -107,7 +109,7 @@ class CartScreen extends StatelessWidget {
                                                       icon: const Icon(
                                                           Icons.remove),
                                                       onPressed: () {
-                                                        cart.removeWristwatch(
+                                                        cart.removeProduct(
                                                             cartItem);
                                                       },
                                                     ),
@@ -117,12 +119,12 @@ class CartScreen extends StatelessWidget {
                                                       height: 30,
                                                       width: 30,
                                                       color:
-                                                          Colors.grey.shade200,
+                                                          Colors.blue.shade100,
                                                       child: Text(
                                                         '${cart.getWristwatchQuantity(cartItem)}',
                                                         style: const TextStyle(
                                                             fontSize: 14,
-                                                            color: Colors.grey),
+                                                            color: Colors.blue),
                                                       ),
                                                     ),
                                                     IconButton(
@@ -166,7 +168,7 @@ class CartScreen extends StatelessWidget {
                                   size: 30,
                                 ),
                                 onPressed: () {
-                                  cart.removeWristwatch(cartItem);
+                                  cart.removeProduct(cartItem);
                                 },
                               ),
                             ),
@@ -182,7 +184,7 @@ class CartScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Total Cost: ₦${totalCost.toStringAsFixed(2)}',
+                        'Total price: ₦${totalCost.toStringAsFixed(2)}',
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -195,14 +197,14 @@ class CartScreen extends StatelessWidget {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade700,
+                          backgroundColor: Colors.blue.shade900,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                         child: const Text(
-                          'Proceed to Checkout',
+                          'Checkout',
                         ),
                       ),
                     ],

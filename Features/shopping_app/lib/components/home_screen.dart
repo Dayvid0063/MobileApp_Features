@@ -1,7 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'order_history.dart';
+import 'package:provider/provider.dart';
+import 'package:shoppingapp/components/manu_page.dart';
 import 'productscreen.dart';
+import 'package:shoppingapp/models/wp.dart';
+import 'package:shoppingapp/components/wishlist.dart';
 import 'package:shoppingapp/services/services.dart';
 import '../models/product.dart';
 import 'product_info.dart';
@@ -15,7 +18,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<Map<String, List<Watch>>> futureProducts;
-  // ignore: unused_field
   int _currentCarouselIndex = 0;
   Set<String> wishlistedProductIds = {};
 
@@ -23,16 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     futureProducts = Apicall().fetchProducts(1, 10);
-  }
-
-  void toggleWishlist(String productId) {
-    setState(() {
-      if (wishlistedProductIds.contains(productId)) {
-        wishlistedProductIds.remove(productId);
-      } else {
-        wishlistedProductIds.add(productId);
-      }
-    });
   }
 
   void navigateToProductDetails(Watch product) {
@@ -54,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
               spacing: 10.0,
               runSpacing: 10.0,
               children: brandImages.keys.map((brandName) {
-                return _buildBrandIcon(brandName, brandImages);
+                return _buildBrandIcon(brandName);
               }).toList(),
             ),
           ),
@@ -73,21 +65,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final wishlistProvider = Provider.of<WishlistProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('WatchMart'),
+        title: const Text('StepUp'),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(Icons.receipt),
+            icon: const Icon(Icons.favorite_border),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => const OrderHistoryScreen()),
+                MaterialPageRoute(builder: (context) => const WishlistPage()),
               );
             },
           ),
@@ -99,7 +91,25 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildGreeting(),
+              const Row(
+                children: [
+                  CircleAvatar(
+                    radius: 25,
+                    backgroundImage: NetworkImage(
+                        'https://cdn3.iconfinder.com/data/icons/user-icon-3-1/100/user_3_Artboard_1-1024.png'),
+                  ),
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Good afternoon 👋', style: TextStyle(fontSize: 16)),
+                      Text('David Orji',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ],
+              ),
               FutureBuilder<Map<String, List<Watch>>>(
                 future: futureProducts,
                 builder: (context, snapshot) {
@@ -123,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'Cartier': 'assets/images/watch14.jpg',
                       'Breitling': 'assets/images/watch1.webp'
                     };
-                    final displayedBrands = brandImages.keys.take(9).toList();
+                    final displayedBrands = brandImages.keys.take(7).toList();
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           runSpacing: 10.0,
                           children: [
                             ...displayedBrands.map((brandName) {
-                              return _buildBrandIcon(brandName, brandImages);
+                              return _buildBrandIcon(brandName);
                             }),
                             GestureDetector(
                               onTap: () {
@@ -156,10 +166,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 20),
                         _buildSectionTitle('Our Special Offers'),
-                        _buildProductList(products['specialOffer']!),
+                        _buildProductList(
+                            products['specialOffer']!, wishlistProvider),
                         const SizedBox(height: 20),
-                        _buildSectionTitle('Featured Watches'),
-                        _buildProductList(products['featured']!),
+                        _buildSectionTitle('Featured Sneakers'),
+                        _buildProductList(
+                            products['featured']!, wishlistProvider),
                         const SizedBox(height: 20),
                         Center(
                           child: ElevatedButton(
@@ -190,30 +202,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildGreeting() {
-    return const Row(
-      children: [
-        CircleAvatar(
-          radius: 25,
-          backgroundImage: NetworkImage(
-              'https://cdn3.iconfinder.com/data/icons/avatars-flat/33/man_5-512.png'),
-        ),
-        SizedBox(width: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Good afternoon 👋', style: TextStyle(fontSize: 16)),
-            Text('David Orji',
-                style: TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.bold)),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBrandIcon(String brandName, Map<String, String> brandImages) {
+  Widget _buildBrandIcon(String brandName) {
     Widget brandIcon;
+
+    Map<String, String> brandImages = {
+      'Rolex': 'assets/images/watch6.jpg',
+      'Omega': 'assets/images/watch7.jpg',
+      'Tag Heuer': 'assets/images/watch8.jpeg',
+      'Patek Philippe': 'assets/images/watch9.jpeg',
+      'Casio': 'assets/images/watch10.jpeg',
+      'Seiko': 'assets/images/watch11.jpg',
+      'Hublot': 'assets/images/watch12.jpeg',
+      'Tudor': 'assets/images/watch13.jpg',
+      'Cartier': 'assets/images/watch14.jpg',
+      'Breitling': 'assets/images/watch1.webp'
+    };
 
     if (brandImages.containsKey(brandName)) {
       brandIcon = Container(
@@ -224,8 +227,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ClipOval(
           child: Image.asset(
             brandImages[brandName]!,
-            width: 60,
-            height: 60,
+            width: 70,
+            height: 70,
             fit: BoxFit.cover,
           ),
         ),
@@ -237,12 +240,22 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    return Column(
-      children: [
-        brandIcon,
-        const SizedBox(height: 5),
-        Text(brandName),
-      ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BrandProductsPage(brandName: brandName),
+          ),
+        );
+      },
+      child: Column(
+        children: [
+          brandIcon,
+          const SizedBox(height: 5),
+          Text(brandName),
+        ],
+      ),
     );
   }
 
@@ -253,7 +266,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildProductList(List<Watch> products) {
+  Widget _buildProductList(
+      List<Watch> products, WishlistProvider wishlistProvider) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -266,12 +280,12 @@ class _HomeScreenState extends State<HomeScreen> {
       itemCount: products.length,
       itemBuilder: (context, index) {
         final product = products[index];
-        return _buildProductCard(product);
+        return _buildProductCard(product, wishlistProvider);
       },
     );
   }
 
-  Widget _buildProductCard(Watch product) {
+  Widget _buildProductCard(Watch product, WishlistProvider wishlistProvider) {
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -301,15 +315,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   right: 8,
                   child: IconButton(
                     icon: Icon(
-                      wishlistedProductIds.contains(product.id)
+                      wishlistProvider.isInWishlist(product.id)
                           ? Icons.favorite
                           : Icons.favorite_border,
-                      color: wishlistedProductIds.contains(product.id)
+                      color: wishlistProvider.isInWishlist(product.id)
                           ? Colors.red
                           : Colors.grey,
                     ),
                     onPressed: () {
-                      toggleWishlist(product.id);
+                      wishlistProvider.toggleWishlist(product);
                     },
                   ),
                 ),
@@ -323,10 +337,52 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(product.manufacturer, style: const TextStyle(fontSize: 12)),
                 Text(product.name,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold)),
-                Text('\$${product.price.toStringAsFixed(2)}',
-                    style: const TextStyle(fontSize: 14, color: Colors.blue)),
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                const Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.orange, size: 16),
+                    Text('4.5 (100 sold)', style: TextStyle(fontSize: 12)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (product.discountPrice != null)
+                          Text(
+                            '₦${product.discountPrice!.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: product.discountPrice != null
+                                  ? Colors.blue.shade900
+                                  : Colors.grey,
+                            ),
+                          ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '₦${product.price.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: product.discountPrice == null
+                                ? Colors.blue.shade900
+                                : Colors.grey,
+                            decoration: product.discountPrice == null
+                                ? TextDecoration.none
+                                : TextDecoration.lineThrough,
+                          ),
+                        ),
+                      ],
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        navigateToProductDetails(product);
+                      },
+                      child: const Icon(Icons.shopping_cart),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -336,54 +392,152 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCarousel(List<Watch> products) {
-    return CarouselSlider(
-      options: CarouselOptions(
-        height: 200.0,
-        autoPlay: true,
-        aspectRatio: 16 / 9,
-        viewportFraction: 0.8,
-        onPageChanged: (index, reason) {
-          setState(() {
-            _currentCarouselIndex = index;
-          });
-        },
-      ),
-      items: products.map((product) {
-        return Builder(
-          builder: (BuildContext context) {
-            return GestureDetector(
-              onTap: () {
-                navigateToProductDetails(product);
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  image: DecorationImage(
-                    image: NetworkImage(product.images[0]),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      bottom: 10,
-                      left: 10,
-                      child: Text(
-                        product.name,
-                        style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
+    return Column(
+      children: [
+        const SizedBox(height: 20),
+        Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            CarouselSlider(
+              options: CarouselOptions(
+                height: 220.0,
+                autoPlay: true,
+                autoPlayInterval: const Duration(seconds: 3),
+                autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                enlargeCenterPage: true,
+                aspectRatio: 16 / 9,
+                viewportFraction: 1.0,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    _currentCarouselIndex = index;
+                  });
+                },
               ),
-            );
-          },
-        );
-      }).toList(),
+              items: products.map((product) {
+                return GestureDetector(
+                  onTap: () {
+                    navigateToProductDetails(product);
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.lightBlue,
+                          Colors.blue.shade900,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              product.images[0],
+                              fit: BoxFit.cover,
+                              width: 150.0,
+                              height: 150.0,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  product.manufacturer,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  product.name,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '₦${product.discountPrice != null ? product.discountPrice!.toStringAsFixed(2) : product.price.toStringAsFixed(2)}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    navigateToProductDetails(product);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: Colors.blue,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.shopping_cart,
+                                          color:
+                                              Color.fromRGBO(13, 71, 161, 1)),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Add to cart',
+                                        style: TextStyle(
+                                            color:
+                                                Color.fromRGBO(13, 71, 161, 1)),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            Positioned(
+              bottom: 10.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: products.map((product) {
+                  int index = products.indexOf(product);
+                  return Container(
+                    width: 8.0,
+                    height: 8.0,
+                    margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _currentCarouselIndex == index
+                          ? Colors.blue
+                          : Colors.grey[300],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

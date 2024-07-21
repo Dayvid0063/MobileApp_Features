@@ -14,20 +14,23 @@ class WatchCartModel extends ChangeNotifier {
 
     if (existingIndex != -1) {
       _items[existingIndex].quantity += quantity;
-      print('Updated quantity of existing wristwatch: ${_items[existingIndex]}');
     } else {
       _items.add(WatchCartItem(wristwatch, quantity, size, color));
-      print('Added new wristwatch to cart: ${_items.last}');
     }
     notifyListeners();
   }
 
-  void removeWristwatch(WatchCartItem item) {
+  void removeProduct(WatchCartItem item) {
     if (item.quantity > 1) {
       item.quantity -= 1;
     } else {
       _items.remove(item);
     }
+    notifyListeners();
+  }
+
+  void clearCart() {
+    _items.clear();
     notifyListeners();
   }
 
@@ -54,9 +57,4 @@ class WatchCartItem {
   final Color? color;
 
   WatchCartItem(this.wristwatch, this.quantity, this.size, this.color);
-
-  @override
-  String toString() {
-    return 'WatchCartItem(wristwatch: $wristwatch, quantity: $quantity, size: $size, color: $color)';
-  }
 }
